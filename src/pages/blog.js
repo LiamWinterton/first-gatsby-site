@@ -6,20 +6,30 @@ import Layout from '../components/layout'
 const BlogPage = ({ data }) => {
 	return (
 		<Layout pageTitle="My Blog Posts">
-			{data.allFile.nodes.map(node => {
-				return (
-					<li key={node.name}>{node.name}</li>
-				)
-			})}
+			{
+				data.allMdx.nodes.map(node => {
+					return (
+						<article key={node.id}>
+							<h2>{node.frontmatter.title}</h2>
+							<p>Posted: {node.frontmatter.date}</p>
+						</article>
+					)
+				})
+			}
 		</Layout>
 	)
 }
 
 export const query = graphql`
 	query {
-		allFile(filter: {sourceInstanceName: {eq: "blog"}}) {
+		allMdx(sort:{fields:frontmatter___date, order:DESC}) {
 			nodes {
-				name
+				id
+				body
+				frontmatter {
+					date(formatString: "MMMM D, YYYY")
+					title
+				}
 			}
 		}
 	}
